@@ -1,0 +1,6 @@
+dist/
+jest.config.ts
+test/
+seeders/
+migrations/
+.eslintrc.js
