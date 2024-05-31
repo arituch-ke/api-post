@@ -1,22 +1,33 @@
 import {Sequelize} from 'sequelize';
 import SequelizeConnection from '@/helpers/SequelizeConnection';
+import Post from './Post';
+import Comment from './Comment';
+import User from './User';
+import Tag from './Tag';
+import PostTagMapping from './PostTagMapping';
 
 // Database model to connection configuration
 const config = {
   blog: {
     connection: SequelizeConnection.getClient('blog'),
-    models: {},
+    models: {
+      Post,
+      Comment,
+      User,
+      Tag,
+      PostTagMapping,
+    },
   },
 };
 
 /*
  * Setup models with database connection
  */
-// Object.values(config).forEach(({connection, models}) => {
-//   Object.values(models).forEach(Model => Model.initModel(connection));
+Object.values(config).forEach(({connection, models}) => {
+  Object.values(models).forEach(Model => Model.initModel(connection));
 
-//   Object.values(models).forEach(Model => Model.associateModel(models));
-// });
+  Object.values(models).forEach(Model => Model.associateModel(models));
+});
 
 export const blogPostsArchive = {
   ...config.blog.models,
