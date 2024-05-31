@@ -4,7 +4,7 @@
   "description": "",
   "main": "dist/src/index.js",
   "scripts": {
-    "start": "echo \"Error: no test specified\" && exit 1",
+    "start": "node .",
     "dev": "node .",
     "predev": "yarn build",
     "prebuild": "gts clean",
@@ -13,10 +13,10 @@
     "fix": "gts fix",
     "lint": "gts lint",
     "test": "jest --passWithNoTests --runInBand",
-    "create:migrate": "yarn sequelize-cli migration:generate --migrations-path ./migrations/blogPostsArchive --name ",
-    "db:migrate": "yarn run build && yarn sequelize db:migrate --env blogPostsArchive --migrations-path ./migrations/blogPostsArchive --seeders-path ./seeders/blogPostsArchive",
-    "db:seed:all": "yarn run build && yarn sequelize db:seed:all --env blogPostsArchive --migrations-path migrations/blogPostsArchive --seeders-path seeders/blogPostsArchive",
-    "db:seed": "yarn run build && yarn sequelize db:seed --env blogPostsArchive --migrations-path migrations/blogPostsArchive --seeders-path seeders/blogPostsArchive"
+    "create:migrate": "yarn sequelize-cli migration:generate --migrations-path ./migrations/blog --name ",
+    "db:migrate": "yarn run build && yarn sequelize db:migrate --env blog --migrations-path ./migrations/blog --seeders-path ./seeders/blog",
+    "db:seed:all": "yarn run build && yarn sequelize db:seed:all --env blog --migrations-path migrations/blog --seeders-path seeders/blog",
+    "db:seed": "yarn run build && yarn sequelize db:seed --env blog --migrations-path migrations/blog --seeders-path seeders/blog"
   },
   "keywords": [],
   "author": "",

@@ -14,7 +14,7 @@ const commonConfig: Options = {
     : false,
 };
 
-export const blogPostsArchive = {
+export const blog = {
   ...commonConfig,
   database: `${environment.DB_PREFIX}`,
 };
