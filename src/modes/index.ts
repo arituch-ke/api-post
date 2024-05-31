@@ -3,8 +3,8 @@ import SequelizeConnection from '@/helpers/SequelizeConnection';
 
 // Database model to connection configuration
 const config = {
-  blogPostsArchive: {
-    connection: SequelizeConnection.getClient('blogPostsArchive'),
+  blog: {
+    connection: SequelizeConnection.getClient('blog'),
     models: {},
   },
 };
@@ -19,7 +19,7 @@ const config = {
 // });
 
 export const blogPostsArchive = {
-  ...config.blogPostsArchive.models,
+  ...config.blog.models,
   Sequelize,
-  sequelize: config.blogPostsArchive.connection,
+  sequelize: config.blog.connection,
 };
