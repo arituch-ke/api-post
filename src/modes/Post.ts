@@ -16,6 +16,9 @@ export default class Post extends Model implements IPost {
   public content!: string;
   public cover!: string;
   public status!: PostStatus;
+  public postedBy!: string;
+  public postedAt!: Date;
+  public tags!: string[];
 
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
@@ -36,8 +39,10 @@ export default class Post extends Model implements IPost {
         userId: DataTypes.UUID,
         title: DataTypes.STRING,
         content: DataTypes.STRING,
-        public: DataTypes.STRING,
         cover: DataTypes.STRING,
+        postedBy: DataTypes.STRING,
+        postedAt: DataTypes.DATE,
+        tags: DataTypes.ARRAY(DataTypes.STRING),
         status: DataTypes.ENUM('DRAFT', 'PUBLISHED', 'ARCHIVED'),
       },
       {
@@ -56,11 +61,5 @@ export default class Post extends Model implements IPost {
   static associateModel(models: ISequelizeModels): void {
     Post.belongsTo(models.User, {foreignKey: 'userId', as: 'user'});
     Post.hasMany(models.Comment, {foreignKey: 'postId', as: 'comments'});
-    Post.belongsToMany(models.Tag, {
-      through: models.PostTagMapping,
-      as: 'tags',
-      foreignKey: 'postId',
-      otherKey: 'tagId',
-    });
   }
 }
