@@ -17,6 +17,7 @@ export default class User extends Model implements IUser {
   public password!: string;
   public status!: UserStatus;
   public lastLogin!: Date;
+  public refreshToken!: string;
 
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
@@ -43,9 +44,10 @@ export default class User extends Model implements IUser {
           type: DataTypes.STRING,
           unique: true,
         },
-        public: DataTypes.STRING,
+        password: DataTypes.STRING,
         status: DataTypes.ENUM('ACTIVE', 'INACTIVE'),
         lastLogin: DataTypes.DATE,
+        refreshToken: DataTypes.STRING,
       },
       {
         indexes: [{fields: ['id']}],
