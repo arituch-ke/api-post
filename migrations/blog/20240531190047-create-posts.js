@@ -19,6 +19,18 @@ module.exports = {
       },
       cover: {
         type: Sequelize.STRING,
+        allowNull: true,
+      },
+      postedBy: {
+        type: Sequelize.STRING,
+      },
+      postedAt: {
+        allowNull: true,
+        type: Sequelize.DATE,
+      },
+      tags: {
+        type: Sequelize.ARRAY(Sequelize.STRING),
+        allowNull: false,
       },
       createdAt: {
         allowNull: false,
