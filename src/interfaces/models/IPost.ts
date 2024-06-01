@@ -7,6 +7,8 @@ export enum PostStatus {
   ARCHIVED = 'ARCHIVED',
 }
 
+export const AllPostStatus = Object.values(PostStatus);
+
 export interface IPost {
   id: UUID;
   userId: UUID;
