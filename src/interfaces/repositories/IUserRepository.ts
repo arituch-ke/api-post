@@ -16,6 +16,10 @@ export interface IUserRepository {
     userId: IUser['id'],
     transaction?: Transaction | null
   ): Promise<IUser | null>;
+  findByEmail(
+    email: IUser['email'],
+    transaction?: Transaction | null
+  ): Promise<IUser | null>;
   create(
     request: CreateUserRequest,
     transaction?: Transaction | null
