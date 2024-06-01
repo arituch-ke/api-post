@@ -1,15 +1,9 @@
 import {NextFunction, Request, Response} from 'express';
 import environment from '@/configs/environment';
 import Logger from '@/helpers/Logger';
-import {
-  AuthenticationError,
-  PermissionError,
-  ResourceNotFoundError,
-  ValidationError,
-} from '@/errors';
+import {CustomError, AuthenticationError} from '@/errors';
 
 import {INTERNAL_SERVER_ERROR} from 'http-status';
-import CustomError from '@/errors/CustomError';
 import {failed} from '@/transports/http/helpers/response';
 import {IResponseFailed} from '@/interfaces/common/IResponse';
 
@@ -56,22 +50,15 @@ export default async function (
   Logger.error(String(errorMessageWithStack), {error: errorMessageWithStack});
 
   try {
-    if (error instanceof AuthenticationError) {
+    if (error instanceof CustomError) {
       return failed(res, responseNormalFailed);
-    } else if (error instanceof PermissionError) {
-      return failed(res, responseNormalFailed);
-    } else if (error instanceof ResourceNotFoundError) {
-      return failed(res, responseNormalFailed);
-    } else if (error instanceof ValidationError) {
-      return failed(res, responseNormalFailed);
-    } else {
-      if (environment.NODE_ENV !== 'production') {
-        responseFailed.result.message =
-          error instanceof Error ? error.message : error;
-      }
-
-      return failed(res, responseFailed, INTERNAL_SERVER_ERROR);
     }
+
+    if (environment.NODE_ENV !== 'production') {
+      responseFailed.result.message = errorMessageWithStack;
+    }
+
+    return failed(res, responseFailed, INTERNAL_SERVER_ERROR);
   } catch (error: CustomError | Error | unknown) {
     if (error instanceof CustomError || error instanceof Error) {
       Logger.error(`Failed to handle error: ${error.message}`, {
