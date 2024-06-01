@@ -8,6 +8,7 @@ import {
   ListUserResponse,
   UpdateUserRequest,
 } from '@/interfaces/services/IUserService';
+import * as bcrypt from 'bcryptjs';
 // import {Op, WhereOptions} from 'sequelize';
 
 const {User} = database;
@@ -16,6 +17,16 @@ const {User} = database;
  * UserRepository
  */
 export default class UserRepository implements IUserRepository {
+  /**
+   * Generate Hash Password
+   * @param {string} password - The user password
+   * @return {string} The user
+   * @private
+   */
+  private generateHashPassword(password: string): string {
+    return bcrypt.hashSync(password, bcrypt.genSaltSync());
+  }
+
   /**
    * Find All Users
    * @param {ListUserRequest} request List User Request
@@ -53,6 +64,19 @@ export default class UserRepository implements IUserRepository {
   }
 
   /**
+   * Find User By Email
+   * @param {IUser.email} email User Email
+   * @param {Transaction} transaction Transaction
+   * @returns {Promise<IUser | null>} User
+   */
+  public async findByEmail(
+    email: IUser['email'],
+    transaction?: Transaction | null
+  ): Promise<IUser | null> {
+    return User.findOne({where: {email}, transaction});
+  }
+
+  /**
    * Create User
    * @param {CreateUserRequest} request Create User Request
    * @param {Transaction} transaction Transaction
@@ -62,8 +86,14 @@ export default class UserRepository implements IUserRepository {
     request: CreateUserRequest,
     transaction?: Transaction | null
   ): Promise<IUser['id']> {
-    const user = await User.create(request, {transaction});
-    return user.id;
+    try {
+      request.password = this.generateHashPassword(request.password);
+      const user = await User.create(request, {transaction});
+      return user.id;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
   }
 
   /**
