@@ -3,20 +3,12 @@ import SequelizeConnection from '@/helpers/SequelizeConnection';
 import Post from './Post';
 import Comment from './Comment';
 import User from './User';
-import Tag from './Tag';
-import PostTagMapping from './PostTagMapping';
 
 // Database model to connection configuration
 const config = {
   blog: {
     connection: SequelizeConnection.getClient('blog'),
-    models: {
-      Post,
-      Comment,
-      User,
-      Tag,
-      PostTagMapping,
-    },
+    models: {Post, Comment, User},
   },
 };
 
