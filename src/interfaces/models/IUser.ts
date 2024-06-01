@@ -15,6 +15,7 @@ export interface IUser {
   password: string;
   status: UserStatus;
   lastLogin: Date;
+  refreshToken: string;
   createdAt: Date;
   updatedAt: Date;
 

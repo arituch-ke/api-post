@@ -10,14 +10,15 @@ export type ListUserRequest = Pagination;
 export type UpdateUserRequest = Partial<IUser>;
 export type CommonUserResponse = {message: string; userId: IUser['id']};
 
-export type CreateUserRequest = Omit<
-  IUser,
-  'id' | 'createdAt' | 'updatedAt' | 'status' | 'lastLogin'
->;
+export type CreateUserRequest = Pick<IUser, 'email' | 'name' | 'password'>;
 
 export interface IUserService extends services {
   getUserById(
     userId: UUID,
     transaction?: Transaction
   ): Promise<UserResponse | null>;
+  createUser(
+    request: CreateUserRequest,
+    transaction?: Transaction
+  ): Promise<CommonUserResponse>;
 }

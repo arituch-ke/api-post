@@ -23,6 +23,10 @@ module.exports = {
         type: Sequelize.STRING,
         unique: true,
       },
+      refreshToken: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
       lastLogin: {
         type: Sequelize.DATE,
         allowNull: true,
@@ -30,13 +34,16 @@ module.exports = {
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
       },
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
       },
       status: {
         type: Sequelize.ENUM('ACTIVE', 'INACTIVE'),
+        defaultValue: 'ACTIVE',
       },
     });
 
