@@ -29,7 +29,7 @@ Object.values(config).forEach(({connection, models}) => {
   Object.values(models).forEach(Model => Model.associateModel(models));
 });
 
-export const blogPostsArchive = {
+export const blog = {
   ...config.blog.models,
   Sequelize,
   sequelize: config.blog.connection,

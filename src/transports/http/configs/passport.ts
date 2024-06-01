@@ -1,71 +1,84 @@
-import * as joi from 'joi';
 import * as passport from 'passport';
 import {
-  VerifiedCallback,
-  Strategy as JWTStrategy,
   ExtractJwt,
+  Strategy as JWTStrategy,
+  StrategyOptions,
+  VerifiedCallback,
 } from 'passport-jwt';
 import Logger from '@/helpers/Logger';
 import environment from '@/configs/environment';
 import contextStorage from '@/configs/contextStorage';
+import {AuthenticationError} from '@/errors';
+import {UUID} from 'crypto';
+import * as services from '@/services';
 
-export enum APIRole {
-  USER_API = 'USER_API',
-  ADMIN_API = 'ADMIN_API',
+interface IJWTPayload {
+  id: UUID;
+  type: string;
 }
 
-interface IAPIJWTPayload {
-  role: APIRole;
-}
+const bearerTokenExtractor = ExtractJwt.fromAuthHeaderAsBearerToken();
+const JWTStrategyOptions: StrategyOptions = {
+  secretOrKey: environment.API_JWT_SECRET,
+  jwtFromRequest: bearerTokenExtractor,
+  passReqToCallback: false,
+};
 
 /**
- * JWT authentication callback
- * @param {unknown} payload JWT payload
- * @param {VerifiedCallback} done Callback function to be called when authentication is complete
- * @return {void}
+ * This is a JWT passport strategy
+ * @param {IJWTPayload} jwtPayload - JWT payload
+ * @param {VerifiedCallback} done - Callback function to be called when authentication is complete
+ * @return {Promise<void>} Promise that resolves when authentication is complete
  */
-function jwtAuthCallback(payload: unknown, done: VerifiedCallback): void {
-  const validatePayloadResult = joi
-    .object<IAPIJWTPayload>()
-    .keys({
-      role: joi.string().valid(APIRole.USER_API, APIRole.ADMIN_API).required(),
-    })
-    .validate(payload);
+async function jwtAuthCallback(
+  jwtPayload: IJWTPayload,
+  done: VerifiedCallback
+): Promise<void> {
+  try {
+    const {id, type} = jwtPayload;
 
-  const error = validatePayloadResult.error;
+    if (type !== 'access') {
+      Logger.warning(
+        `Failed to authenticate user with JWT: invalid token type ${type}`,
+        {id, type}
+      );
 
-  if (error) {
-    Logger.warning(
-      `Failed to authenticate user with JWT: invalid token payload ${error.message}`,
-      {payload}
-    );
-    return done(null, false);
+      return done(null, false);
+    }
+
+    // If the user does not exist, this will throw an error
+    const {user} = await services.UserService.getUserById(id);
+
+    if (!user) {
+      Logger.warning(
+        `Failed to authenticate user with JWT: user not found id=${id}`,
+        {id, type}
+      );
+
+      return done(null, false);
+    }
+
+    Logger.info(`Successfully authenticated user id=${user.id} with JWT`, {
+      userId: user.id,
+    });
+
+    contextStorage.set('userId', user.id);
+    done(null, user, {id, type});
+  } catch (error: Error | unknown) {
+    if (error instanceof Error) {
+      Logger.error(`Failed to authenticate user with JWT: ${error.stack}`, {
+        stack: error.stack,
+      });
+    }
+
+    done(new AuthenticationError('Unauthenticated'));
   }
-
-  const {role} = validatePayloadResult.value;
-
-  // Note: this is not actually an end-user, but an internal API user
-  const user = {role};
-
-  Logger.info('Successfully authenticated user with JWT', {
-    user,
-  });
-
-  // Set context storage for logging (userId is used as one of logging format, so we set "role" as user ID)
-  contextStorage.set('userId', user.role);
-  done(null, user);
 }
 
-const strategy = new JWTStrategy(
-  {
-    secretOrKey: environment.API_JWT_SECRET,
-    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-    passReqToCallback: false,
-  },
-  jwtAuthCallback
-);
+// Create JWT strategy
+const strategy = new JWTStrategy(JWTStrategyOptions, jwtAuthCallback);
 
-// Even the strategy is JWT, it still used as some sort of API Key
-passport.use('api-key', strategy);
+// Register JWT strategy
+passport.use('jwt', strategy);
 
 export default passport;
