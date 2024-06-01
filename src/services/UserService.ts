@@ -4,7 +4,12 @@ import Logger from '@/helpers/Logger';
 import * as joi from 'joi';
 import {ValidationError} from '@/errors';
 import {IUserRepository} from '@/interfaces/repositories/IUserRepository';
-import {UserResponse, IUserService} from '@/interfaces/services/IUserService';
+import {
+  UserResponse,
+  IUserService,
+  CommonUserResponse,
+  CreateUserRequest,
+} from '@/interfaces/services/IUserService';
 import {IUser} from '@/interfaces/models/IUser';
 
 /**
@@ -52,5 +57,31 @@ export default class UserService extends Service implements IUserService {
     });
 
     return {user};
+  }
+
+  /**
+   * Create User
+   * @param {CreateUserRequest} request User
+   * @returns {Promise<CommonUserResponse>} CommonUserResponse
+   */
+  public async createUser(
+    request: CreateUserRequest
+  ): Promise<CommonUserResponse> {
+    const schema = joi.object().keys({
+      email: joi.string().email().required(),
+      password: joi.string().required(),
+      name: joi.string().required(),
+    });
+    const value = await this.runValidation(request, schema);
+
+    const userId = await this.runTransaction(async transaction => {
+      return this.UserRepository.create(value, transaction);
+    });
+
+    Logger.info(`Successfully create user by userId=${userId}`, {
+      userId,
+    });
+
+    return {message: 'User created', userId};
   }
 }
