@@ -33,7 +33,7 @@ services:
       postgres:
         condition: service_healthy
     environment:
-      - NODE_ENV=development
+      - NODE_ENV=production
       - LOG_LEVEL=debug
       - LOG_DB_QUERY=false
       - DB_HOST=postgres
