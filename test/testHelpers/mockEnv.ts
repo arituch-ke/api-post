@@ -1,0 +1,20 @@
+jest.mock('@/configs/environment', () => ({
+  __esModule: true,
+  default: {
+    NODE_ENV: 'test',
+    HOST: '0.0.0.0',
+    PORT: 80,
+    API_BASE_PATH: '/',
+    HTTP_DEFAULT_CACHE_CONTROL: 'no-store, no-cache',
+    CORS_WHITELIST_ORIGINS: 'http://localhost',
+    JWT_SECRET: 'XXX',
+    DB_HOST: 'localhost',
+    DB_PORT: 5432,
+    DB_USERNAME: 'postgres',
+    DB_PASSWORD: 'postgres',
+    DB_TIMEZONE: '+07:00',
+    DB_LOG_QUERY: false,
+    DB_PREFIX: 'test',
+    LOG_LEVEL: 'error',
+  },
+}));
