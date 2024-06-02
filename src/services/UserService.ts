@@ -74,14 +74,18 @@ export default class UserService extends Service implements IUserService {
     });
     const value = await this.runValidation(request, schema);
 
-    const userId = await this.runTransaction(async transaction => {
-      return this.UserRepository.create(value, transaction);
-    });
+    const user = await this.UserRepository.findByEmail(value.email);
+    if (user) {
+      Logger.error('Email already exists', {email: value.email});
+      throw new ValidationError('Email already exists');
+    }
+
+    const userId = await this.UserRepository.create(value);
 
     Logger.info(`Successfully create user by userId=${userId}`, {
       userId,
     });
 
-    return {message: 'User created', userId};
+    return {message: 'Created user successfully', userId};
   }
 }
