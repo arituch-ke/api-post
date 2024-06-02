@@ -9,6 +9,8 @@ Before you start, ensure you have the following installed:
 - Node.js (preferably the latest LTS version)
 - Yarn package manager
 - Docker Desktop for running containers
+- Postman
+	- link for collection API https://drive.google.com/drive/folders/1VX01vSMJiUBvzsxPQoBPN-5oszBtIf_r?usp=sharing
 
 ## Local Development
 
