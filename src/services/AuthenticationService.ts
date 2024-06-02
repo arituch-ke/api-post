@@ -51,7 +51,7 @@ export default class AuthenticationService
    * @param {string | number} expiresIn - The expires
    * @return {string} Access token
    */
-  private generateAccessToken(
+  public generateAccessToken(
     userId: UUID,
     expiresIn: string | number = DEFAULT_ACCESS_TOKEN_LIFETIME
   ) {
@@ -76,7 +76,7 @@ export default class AuthenticationService
    * @return {Boolean} The user
    * @private
    */
-  private validPassword(password: string, hashPassword: string): Boolean {
+  public validPassword(password: string, hashPassword: string): Boolean {
     return bcrypt.compareSync(password, hashPassword);
   }
 
@@ -86,7 +86,7 @@ export default class AuthenticationService
    * @param {string | number} expiresIn - The expires
    * @return {string} Access token
    */
-  private generateRefreshToken(
+  public generateRefreshToken(
     userId: UUID,
     expiresIn: string | number = DEFAULT_REFRESH_TOKEN_LIFETIME
   ) {
@@ -134,12 +134,9 @@ export default class AuthenticationService
     const accessToken = this.generateAccessToken(user.id);
     const refreshToken = this.generateRefreshToken(user.id);
 
-    this.runTransaction(async transaction => {
-      await this.UserRepository.updateById(
-        user.id,
-        {lastLogin: dayjs().toDate(), refreshToken},
-        transaction
-      );
+    await this.UserRepository.updateById(user.id, {
+      lastLogin: dayjs().toDate(),
+      refreshToken,
     });
 
     Logger.info(`Successfully login user with email=${email}`, {email});
@@ -191,12 +188,8 @@ export default class AuthenticationService
     const newAccessToken = this.generateAccessToken(user.id);
     const newRefreshToken = this.generateRefreshToken(user.id);
 
-    this.runTransaction(async transaction => {
-      await this.UserRepository.updateById(
-        user.id,
-        {refreshToken: newRefreshToken},
-        transaction
-      );
+    await this.UserRepository.updateById(user.id, {
+      refreshToken: newRefreshToken,
     });
 
     Logger.info(`Successfully refresh access token for userId=${userId}`, {
