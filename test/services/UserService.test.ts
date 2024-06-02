@@ -32,7 +32,18 @@ describe('UserService', () => {
       const user = await service.getUserById(userId);
 
       // Assert
-      expect(user).toEqual({user: mockUser});
+      expect(user).toEqual({
+        user: {
+          id: mockUser.id,
+          name: mockUser.name,
+          username: mockUser.username,
+          email: mockUser.email,
+          lastLogin: mockUser.lastLogin,
+          status: mockUser.status,
+          createdAt: mockUser.createdAt,
+          updatedAt: mockUser.updatedAt,
+        },
+      });
     });
 
     it('should throw a ValidationError if userId is not found', async () => {
