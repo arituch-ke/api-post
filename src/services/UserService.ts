@@ -56,7 +56,20 @@ export default class UserService extends Service implements IUserService {
       userId: value.userId,
     });
 
-    return {user};
+    const excludeFields: UserResponse = {
+      user: {
+        id: user.id,
+        name: user.name,
+        username: user.username,
+        email: user.email,
+        status: user.status,
+        lastLogin: user.lastLogin,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+      },
+    };
+
+    return excludeFields;
   }
 
   /**
