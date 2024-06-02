@@ -1,4 +1,4 @@
-# ------- Intermediate Image --------
+# ------- builder Image --------
 FROM node:20 as builder
 
 # run yarn install
