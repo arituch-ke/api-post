@@ -1,7 +1,7 @@
 export type RequestWithPagination = {
   page?: number;
   limit?: number;
-  search?: string;
+  search?: string | null;
 };
 
 export type Pagination = {
