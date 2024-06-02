@@ -9,7 +9,6 @@ import {
   UpdateUserRequest,
 } from '@/interfaces/services/IUserService';
 import * as bcrypt from 'bcryptjs';
-// import {Op, WhereOptions} from 'sequelize';
 
 const {User} = database;
 
@@ -38,9 +37,9 @@ export default class UserRepository implements IUserRepository {
     transaction?: Transaction | null
   ): Promise<ListUserResponse> {
     const offset = (Number(page) - 1) * Number(limit);
-    const option = {offset, limit: Number(limit), transaction};
+    const options = {offset, limit: Number(limit), transaction};
 
-    const {count: total, rows: users} = await User.findAndCountAll(option);
+    const {count: total, rows: users} = await User.findAndCountAll(options);
 
     return {
       users,
@@ -86,14 +85,9 @@ export default class UserRepository implements IUserRepository {
     request: CreateUserRequest,
     transaction?: Transaction | null
   ): Promise<IUser['id']> {
-    try {
-      request.password = this.generateHashPassword(request.password);
-      const user = await User.create(request, {transaction});
-      return user.id;
-    } catch (error) {
-      console.log(error);
-      throw error;
-    }
+    request.password = this.generateHashPassword(request.password);
+    const user = await User.create(request, {transaction});
+    return user.id;
   }
 
   /**
