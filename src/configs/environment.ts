@@ -9,10 +9,6 @@ dotenv.config({
   path: path.resolve(__dirname, pathToProjectRoot, '.env'),
   override: false,
 });
-dotenv.config({
-  path: path.resolve(__dirname, pathToProjectRoot, 'database.env'),
-  override: false,
-});
 
 const schema = joi
   .object<IEnvironment>()
