@@ -14,39 +14,33 @@ import {
 import {IPostRepository} from '@/interfaces/repositories/IPostRepository';
 import {IPost, AllPostStatus} from '@/interfaces/models/IPost';
 import {IUser} from '@/interfaces/models/IUser';
-import {IUserService} from '@/interfaces/services/IUserService';
 import dayjs = require('dayjs');
+import {IUserRepository} from '@/interfaces/repositories/IUserRepository';
 
 /**
  * PostService
  */
 export default class PostService extends Service implements IPostService {
   private readonly PostRepository: IPostRepository;
+  private readonly UserRepository: IUserRepository;
   private readonly runTransaction: ISequelizeTransactionHelper;
-  private UserService!: IUserService;
   /**
    * Constructor
    * @param {Object.<string, string>|null} repositories Repositories
    */
   constructor({
     PostRepository,
+    UserRepository,
     transaction,
   }: {
     PostRepository: new () => IPostRepository;
+    UserRepository: new () => IUserRepository;
     transaction: ISequelizeTransactionHelper;
   }) {
     super();
     this.PostRepository = new PostRepository();
+    this.UserRepository = new UserRepository();
     this.runTransaction = transaction;
-  }
-
-  /**
-   * Inject services
-   * @param {{ILabService,IMatchTemplateService}} services Services
-   * @return {void} Nothing
-   */
-  injectServices(services: {UserService: IUserService}): void {
-    this.UserService = services.UserService;
   }
 
   /**
@@ -58,7 +52,7 @@ export default class PostService extends Service implements IPostService {
     const schema = joi.object().keys({
       page: joi.number().min(1).default(1).optional(),
       limit: joi.number().min(1).default(1).optional(),
-      search: joi.string().optional(),
+      search: joi.string().allow('').optional(),
       status: joi
         .string()
         .valid(...AllPostStatus)
@@ -120,24 +114,22 @@ export default class PostService extends Service implements IPostService {
     });
     const value = await this.runValidation({userId, post: request}, schema);
 
-    const userResult = await this.UserService.getUserById(value.userId);
-    if (!userResult) {
+    const user = await this.UserRepository.findById(value.userId);
+    if (!user) {
       Logger.error(`User not found with id: ${value.userId}`, {
         userId: value.userId,
       });
       throw new ValidationError('User not found');
     }
 
-    const {user} = userResult;
-
     const {status} = value.post;
     const postedAt = status === 'PUBLISHED' ? dayjs().toDate() : null;
 
-    const createdPostId = await this.runTransaction(async transaction => {
-      return this.PostRepository.create(
-        {...value.post, userId: user.id, postedBy: user.name, postedAt},
-        transaction
-      );
+    const createdPostId = await this.PostRepository.create({
+      ...value.post,
+      userId: user.id,
+      postedBy: user.name,
+      postedAt,
     });
 
     Logger.info('Created post successfully', {postId: createdPostId});
@@ -194,9 +186,10 @@ export default class PostService extends Service implements IPostService {
       throw new PermissionError('Unauthorized to update post');
     }
 
-    const updatedPostId = await this.runTransaction(async transaction => {
-      return this.PostRepository.updateById(post.id, value.post, transaction);
-    });
+    const updatedPostId = await this.PostRepository.updateById(
+      post.id,
+      value.post
+    );
 
     Logger.info('Updated post successfully', {postId: updatedPostId});
 
@@ -235,9 +228,7 @@ export default class PostService extends Service implements IPostService {
       throw new PermissionError('Unauthorized to delete post');
     }
 
-    await this.runTransaction(async transaction => {
-      await this.PostRepository.deleteById(post.id, transaction);
-    });
+    await this.PostRepository.deleteById(post.id);
 
     Logger.info('Deleted post successfully', {postId});
 
