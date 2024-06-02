@@ -1,0 +1,82 @@
+version: '3.1'
+
+services:
+  postgres:
+    container_name: 'database-postgres'
+    build:
+      context: postgresql
+    ports:
+      - '5432:5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready', 'postgres']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_MULTIPLE_DATABASES=blog
+
+  migration:
+    container_name: 'migration-blog'
+    image: node:20
+    restart: 'no'
+    command:
+      - /bin/bash
+      - -c
+      - |
+        cd /app && \
+        npx sequelize db:migrate --env blog --migrations-path ./migrations/blog && \
+        npx sequelize db:seed:all --env blog --seeders-path ./seeders/blog && \
+        sleep 5
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - NODE_ENV=production
+      - LOG_LEVEL=debug
+      - LOG_DB_QUERY=false
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=postgres
+      - DB_TIMEZONE=+07:00
+      - DB_LOG_QUERY=false
+      - DB_PREFIX=blog
+    volumes:
+      - ./:/app
+
+  api-post:
+    build: .
+    container_name: api-post
+    ports:
+      - '8088:8088'
+    depends_on:
+      migration:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
+    restart: always
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:8088/api']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    environment:
+      - NODE_ENV=development
+      - HOST=0.0.0.0
+      - PORT=8088
+      - API_BASE_PATH=/api
+      - HTTP_DEFAULT_CACHE_CONTROL="no-store, no-cache"
+      - CORS_WHITELIST_ORIGINS=http://localhost:3000
+      - JWT_SECRET=helloworld
+      - LOG_LEVEL=debug
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=postgres
+      - DB_TIMEZONE=+07:00
+      - DB_LOG_QUERY=false
+      - DB_PREFIX=blog
+    volumes:
+      - .:/app

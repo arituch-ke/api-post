@@ -107,4 +107,4 @@ function startLocalServer() {
 
 const ExpressApp = startLocalServer();
 
-export {ExpressApp};
+export default ExpressApp;
