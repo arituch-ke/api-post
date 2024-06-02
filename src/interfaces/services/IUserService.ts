@@ -3,7 +3,7 @@ import {IUser} from '@/interfaces/models/IUser';
 import services from '@/abstracts/Service';
 import {Pagination, ResponseWithPagination} from '../common/IPagination';
 
-export type UserResponse = {user: Omit<IUser, 'password'>};
+export type UserResponse = {user: Omit<IUser, 'password' | 'refreshToken'>};
 export type ListUserResponse = {users: IUser[]} & ResponseWithPagination;
 export type ListUserRequest = Pagination;
 export type UpdateUserRequest = Partial<IUser>;
