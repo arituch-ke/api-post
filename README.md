@@ -24,6 +24,40 @@ bash
 
     yarn install
 
+> Copy code
+
+    yarn dev
+
+### Setup Environment Variables
+
+Setting up environment variables is crucial for managing settings and configurations that should not be hardcoded in your source code, such as JWT_SECRET etc. Here’s how to set them up:
+
+1. **Duplicate the example environment file**: Start by duplicating the `.env.example` file in your project directory. This file usually contains all the necessary environment variables with placeholder values or comments on what each variable is used for. In your terminal, run:
+
+    ```bash
+    cp .env.example .env
+    ```
+
+    This command creates a copy of `.env.example` and names the copy `.env`, which will be your active environment file.
+
+2. **Edit the `.env` file**: Open the `.env` file in your preferred text editor. Replace the placeholder values with your specific configurations. For instance:
+
+    - `NODE_ENV=development`
+    - `HOST=0.0.0.0`
+    - `PORT=your_port`
+    - `API_BASE_PATH=your_base_path`
+    - `HTTP_DEFAULT_CACHE_CONTROL="no-store, no-cache"`
+    - `JWT_SECRET=your_jwt_secret`
+    - `LOG_LEVEL=debug`
+    - `DB_HOST=your_db_host`
+    - `DB_PORT=5432`
+    - `DB_USERNAME=your_db_user`
+    - `DB_PASSWORD=your_db_pass`
+    - `DB_TIMEZONE=+07:00`
+    - `DB_LOG_QUERY=false`
+    - `DB_PREFIX=your_db_name`
+
+
 This command reads the `package.json` file and installs all the dependencies listed under `dependencies` and `devDependencies`.
 
 ### Run Unit Tests
