@@ -26,10 +26,10 @@ services:
       - -c
       - |
         cd /app && \
-        npm install && \
-        npm run build && \
-        npm run db:migrate && \
-        npm run db:seed:all \
+        yarn install && \
+        yarn build && \
+        yarn db:migrate && \
+        yarn db:seed:all \
         sleep 5
     depends_on:
       postgres:
