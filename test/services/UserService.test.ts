@@ -55,9 +55,7 @@ describe('UserService', () => {
       await expect(service.getUserById(userId)).rejects.toThrow(
         ValidationError
       );
-      await expect(service.getUserById(userId)).rejects.toThrow(
-        'User not found'
-      );
+      await expect(service.getUserById(userId)).rejects.toBe('User not found');
     });
 
     it('should throw a ValidationError if userId is not a valid UUID', async () => {
@@ -68,7 +66,7 @@ describe('UserService', () => {
       await expect(service.getUserById(userId)).rejects.toThrow(
         ValidationError
       );
-      await expect(service.getUserById(userId)).rejects.toThrow(
+      await expect(service.getUserById(userId)).rejects.toBe(
         '"userId" must be a valid GUID'
       );
     });
@@ -99,7 +97,7 @@ describe('UserService', () => {
       await expect(service.createUser(request)).rejects.toThrow(
         ValidationError
       );
-      await expect(service.createUser(request)).rejects.toThrow(
+      await expect(service.createUser(request)).rejects.toBe(
         '"email" must be a valid email'
       );
     });
@@ -112,7 +110,7 @@ describe('UserService', () => {
       await expect(service.createUser(request)).rejects.toThrow(
         ValidationError
       );
-      await expect(service.createUser(request)).rejects.toThrow(
+      await expect(service.createUser(request)).rejects.toBe(
         '"password" is not allowed to be empty'
       );
     });
@@ -125,7 +123,7 @@ describe('UserService', () => {
       await expect(service.createUser(request)).rejects.toThrow(
         ValidationError
       );
-      await expect(service.createUser(request)).rejects.toThrow(
+      await expect(service.createUser(request)).rejects.toBe(
         '"name" is not allowed to be empty'
       );
     });
@@ -141,7 +139,7 @@ describe('UserService', () => {
       await expect(service.createUser(request)).rejects.toThrow(
         ValidationError
       );
-      await expect(service.createUser(request)).rejects.toThrow(
+      await expect(service.createUser(request)).rejects.toBe(
         'Email already exists'
       );
     });

@@ -2,8 +2,6 @@ import {AuthenticationError, ValidationError} from '@/errors';
 import {
   mockUser,
   mockUserCreateId,
-  mockUserDeleteCount,
-  mockUserUpdateId,
   randomAccessToken,
 } from '../testHelpers/data/user';
 
@@ -64,7 +62,7 @@ describe('AuthenticationService', () => {
       await expect(service.login(email, password)).rejects.toThrow(
         AuthenticationError
       );
-      await expect(service.login(email, password)).rejects.toThrow(
+      await expect(service.login(email, password)).rejects.toBe(
         'Invalid email or password.'
       );
     });
@@ -81,7 +79,7 @@ describe('AuthenticationService', () => {
       await expect(service.login(email, password)).rejects.toThrow(
         AuthenticationError
       );
-      await expect(service.login(email, password)).rejects.toThrow(
+      await expect(service.login(email, password)).rejects.toBe(
         'Invalid email or password.'
       );
     });
@@ -95,7 +93,7 @@ describe('AuthenticationService', () => {
       await expect(service.login(email, password)).rejects.toThrow(
         ValidationError
       );
-      await expect(service.login(email, password)).rejects.toThrow(
+      await expect(service.login(email, password)).rejects.toBe(
         '"email" is not allowed to be empty'
       );
     });
@@ -109,7 +107,7 @@ describe('AuthenticationService', () => {
       await expect(service.login(email, password)).rejects.toThrow(
         ValidationError
       );
-      await expect(service.login(email, password)).rejects.toThrow(
+      await expect(service.login(email, password)).rejects.toBe(
         '"password" is not allowed to be empty'
       );
     });
@@ -160,7 +158,7 @@ describe('AuthenticationService', () => {
       ).rejects.toThrow(ValidationError);
       await expect(
         service.refreshToken(userId, accessToken, refreshToken)
-      ).rejects.toThrow('"userId" is not allowed to be empty');
+      ).rejects.toBe('"userId" is not allowed to be empty');
     });
 
     it('should throw an ValidationError when accessToken is empty', async () => {
@@ -175,7 +173,7 @@ describe('AuthenticationService', () => {
       ).rejects.toThrow(ValidationError);
       await expect(
         service.refreshToken(userId, accessToken, refreshToken)
-      ).rejects.toThrow('"accessToken" is not allowed to be empty');
+      ).rejects.toBe('"accessToken" is not allowed to be empty');
     });
 
     it('should throw an ValidationError when refreshToken is empty', async () => {
@@ -190,7 +188,7 @@ describe('AuthenticationService', () => {
       ).rejects.toThrow(ValidationError);
       await expect(
         service.refreshToken(userId, accessToken, refreshToken)
-      ).rejects.toThrow('"refreshToken" is not allowed to be empty');
+      ).rejects.toBe('"refreshToken" is not allowed to be empty');
     });
 
     it('should throw an AuthenticationError when user not found', async () => {
@@ -206,7 +204,7 @@ describe('AuthenticationService', () => {
       ).rejects.toThrow(AuthenticationError);
       await expect(
         service.refreshToken(userId, accessToken, refreshToken)
-      ).rejects.toThrow('Invalid user.');
+      ).rejects.toBe('Invalid user.');
     });
 
     it('should throw an AuthenticationError when refresh token invalid', async () => {
@@ -224,7 +222,7 @@ describe('AuthenticationService', () => {
       ).rejects.toThrow(AuthenticationError);
       await expect(
         service.refreshToken(userId, accessToken, refreshToken)
-      ).rejects.toThrow('Invalid refresh token.');
+      ).rejects.toBe('Invalid refresh token.');
     });
   });
 });
