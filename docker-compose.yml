@@ -26,8 +26,10 @@ services:
       - -c
       - |
         cd /app && \
-        npx sequelize db:migrate --env blog --migrations-path ./migrations/blog && \
-        npx sequelize db:seed:all --env blog --seeders-path ./seeders/blog && \
+        npm install && \
+        npm run build && \
+        npm run db:migrate && \
+        npm run db:seed:all \
         sleep 5
     depends_on:
       postgres:
