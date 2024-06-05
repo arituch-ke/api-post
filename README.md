@@ -89,7 +89,7 @@ bash
 - `docker compose up`: Builds, (re)creates, starts, and attaches to containers for a service.
 - `-d`: Detaches and runs the containers in the background.
 
-This command reads the `docker-compose.yml` file from your project directory, builds the Docker image for the API (if it doesn't exist), and starts the containers defined in the `docker-compose.yml` file.
+This command reads the `docker-compose.yml` file from your project directory, builds the Docker image for the API.
 
 ### Checking the Container Status
 
