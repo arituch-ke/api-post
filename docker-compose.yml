@@ -29,13 +29,14 @@ services:
         yarn install && \
         yarn build && \
         yarn db:migrate && \
-        yarn db:seed:all \
+        yarn db:seed:all && \
+        rm -rf dist node_modules && \
         sleep 5
     depends_on:
       postgres:
         condition: service_healthy
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=development
       - LOG_LEVEL=debug
       - LOG_DB_QUERY=false
       - DB_HOST=postgres
