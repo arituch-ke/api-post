@@ -1,14 +1,16 @@
 import Logger from '@/helpers/Logger';
 import SequelizeConnection from '@/helpers/SequelizeConnection';
-import '@/transports/http';
+import './transports/http';
 
-SequelizeConnection.connectAll()
-  .then(() => {
+const main = async () => {
+  try {
+    Logger.info('Starting application...');
+    await SequelizeConnection.connectAll();
     Logger.info('Connected to all databases');
-  })
-  .catch(() => {
-    // eslint-disable-next-line no-process-exit
-    process.exit(1);
-  });
+  } catch (error) {
+    const exit = process.exit;
+    exit(1);
+  }
+};
 
-Logger.info('Starting application...');
+main();
