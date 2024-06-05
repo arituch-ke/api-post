@@ -30,7 +30,6 @@ services:
         yarn build && \
         yarn db:migrate && \
         yarn db:seed:all && \
-        rm -rf dist node_modules && \
         sleep 5
     depends_on:
       postgres:
