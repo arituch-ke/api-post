@@ -1,9 +1,8 @@
-import {AuthenticationError, PermissionError, ValidationError} from '@/errors';
+import {PermissionError, ValidationError} from '@/errors';
 import {
   mockCreatePost,
   mockPost,
   mockPostCreateId,
-  mockPostDeleteCount,
   mockPostUpdateId,
   mockUpdatePost,
   mockUserIdNotHasPermission,
@@ -12,8 +11,7 @@ import {
 import * as repositories from '@/repositories';
 import {UUID} from 'crypto';
 import PostService from '@/services/PostService';
-import UserService from '@/services/UserService';
-import {mockUser, mockUserCreateId} from '../testHelpers/data/user';
+import {mockUser} from '../testHelpers/data/user';
 import {ListPostRequest} from '@/interfaces/services/IPostService';
 import PostRepository from '@/repositories/PostRepository';
 import UserRepository from '@/repositories/UserRepository';
@@ -53,8 +51,8 @@ describe('PostService', () => {
       await expect(service.getAllPost(request)).rejects.toThrow(
         ValidationError
       );
-      await expect(service.getAllPost(request)).rejects.toBe(
-        '"page" must be greater than or equal to 1'
+      await expect(service.getAllPost(request)).rejects.toThrow(
+        new ValidationError('"page" must be greater than or equal to 1')
       );
     });
 
@@ -66,8 +64,8 @@ describe('PostService', () => {
       await expect(service.getAllPost(request)).rejects.toThrow(
         ValidationError
       );
-      await expect(service.getAllPost(request)).rejects.toBe(
-        '"limit" must be greater than or equal to 1'
+      await expect(service.getAllPost(request)).rejects.toThrow(
+        new ValidationError('"limit" must be greater than or equal to 1')
       );
     });
 
@@ -79,8 +77,8 @@ describe('PostService', () => {
       await expect(service.getAllPost(request)).rejects.toThrow(
         ValidationError
       );
-      await expect(service.getAllPost(request)).rejects.toBe(
-        '"page" must be greater than or equal to 1'
+      await expect(service.getAllPost(request)).rejects.toThrow(
+        new ValidationError('"page" must be greater than or equal to 1')
       );
     });
 
@@ -92,8 +90,8 @@ describe('PostService', () => {
       await expect(service.getAllPost(request)).rejects.toThrow(
         ValidationError
       );
-      await expect(service.getAllPost(request)).rejects.toBe(
-        '"limit" must be greater than or equal to 1'
+      await expect(service.getAllPost(request)).rejects.toThrow(
+        new ValidationError('"limit" must be greater than or equal to 1')
       );
     });
 
@@ -109,8 +107,10 @@ describe('PostService', () => {
       await expect(service.getAllPost(request)).rejects.toThrow(
         ValidationError
       );
-      await expect(service.getAllPost(request)).rejects.toBe(
-        '"status" must be one of [DRAFT, PUBLISHED, ARCHIVED]'
+      await expect(service.getAllPost(request)).rejects.toThrow(
+        new ValidationError(
+          '"status" must be one of [DRAFT, PUBLISHED, ARCHIVED]'
+        )
       );
     });
 
@@ -126,8 +126,8 @@ describe('PostService', () => {
       await expect(service.getAllPost(request)).rejects.toThrow(
         ValidationError
       );
-      await expect(service.getAllPost(request)).rejects.toBe(
-        '"sort" must be one of [ASC, DESC]'
+      await expect(service.getAllPost(request)).rejects.toThrow(
+        new ValidationError('"sort" must be one of [ASC, DESC]')
       );
     });
 
@@ -139,8 +139,8 @@ describe('PostService', () => {
       await expect(service.getAllPost(request)).rejects.toThrow(
         ValidationError
       );
-      await expect(service.getAllPost(request)).rejects.toBe(
-        '"search" must be a string'
+      await expect(service.getAllPost(request)).rejects.toThrow(
+        new ValidationError('"search" must be a string')
       );
     });
   });
@@ -168,8 +168,8 @@ describe('PostService', () => {
       await expect(service.getPostById(postId)).rejects.toThrow(
         ValidationError
       );
-      await expect(service.getPostById(postId)).rejects.toBe(
-        '"postId" must be a valid GUID'
+      await expect(service.getPostById(postId)).rejects.toThrow(
+        new ValidationError('"postId" must be a valid GUID')
       );
     });
 
@@ -182,7 +182,9 @@ describe('PostService', () => {
       await expect(service.getPostById(postId)).rejects.toThrow(
         ValidationError
       );
-      await expect(service.getPostById(postId)).rejects.toBe('Post not found');
+      await expect(service.getPostById(postId)).rejects.toThrow(
+        new ValidationError('Post not found')
+      );
     });
   });
 
@@ -217,8 +219,8 @@ describe('PostService', () => {
       await expect(service.createPost(userId, request.post)).rejects.toThrow(
         ValidationError
       );
-      await expect(service.createPost(userId, request.post)).rejects.toBe(
-        '"userId" must be a valid GUID'
+      await expect(service.createPost(userId, request.post)).rejects.toThrow(
+        new ValidationError('"userId" must be a valid GUID')
       );
     });
 
@@ -232,8 +234,8 @@ describe('PostService', () => {
       await expect(service.createPost(userId, request.post)).rejects.toThrow(
         ValidationError
       );
-      await expect(service.createPost(userId, request.post)).rejects.toBe(
-        'User not found'
+      await expect(service.createPost(userId, request.post)).rejects.toThrow(
+        new ValidationError('User not found')
       );
     });
 
@@ -252,8 +254,10 @@ describe('PostService', () => {
       await expect(service.createPost(userId, request.post)).rejects.toThrow(
         ValidationError
       );
-      await expect(service.createPost(userId, request.post)).rejects.toBe(
-        '"post.status" must be one of [DRAFT, PUBLISHED, ARCHIVED]'
+      await expect(service.createPost(userId, request.post)).rejects.toThrow(
+        new ValidationError(
+          '"post.status" must be one of [DRAFT, PUBLISHED, ARCHIVED]'
+        )
       );
     });
 
@@ -269,8 +273,8 @@ describe('PostService', () => {
       await expect(service.createPost(userId, request.post)).rejects.toThrow(
         ValidationError
       );
-      await expect(service.createPost(userId, request.post)).rejects.toBe(
-        '"post.title" is not allowed to be empty'
+      await expect(service.createPost(userId, request.post)).rejects.toThrow(
+        new ValidationError('"post.title" is not allowed to be empty')
       );
     });
 
@@ -286,8 +290,8 @@ describe('PostService', () => {
       await expect(service.createPost(userId, request.post)).rejects.toThrow(
         ValidationError
       );
-      await expect(service.createPost(userId, request.post)).rejects.toBe(
-        '"post.content" is not allowed to be empty'
+      await expect(service.createPost(userId, request.post)).rejects.toThrow(
+        new ValidationError('"post.content" is not allowed to be empty')
       );
     });
 
@@ -303,8 +307,8 @@ describe('PostService', () => {
       await expect(service.createPost(userId, request.post)).rejects.toThrow(
         ValidationError
       );
-      await expect(service.createPost(userId, request.post)).rejects.toBe(
-        '"post.tags" must be an array'
+      await expect(service.createPost(userId, request.post)).rejects.toThrow(
+        new ValidationError('"post.tags" must be an array')
       );
     });
   });
@@ -344,7 +348,7 @@ describe('PostService', () => {
       ).rejects.toThrow(ValidationError);
       await expect(
         service.updatePostById(userId, postId, request.post)
-      ).rejects.toBe('"userId" must be a valid GUID');
+      ).rejects.toThrow(new ValidationError('"userId" must be a valid GUID'));
     });
 
     it('should throw a ValidationError when postId is not a UUID', async () => {
@@ -359,7 +363,7 @@ describe('PostService', () => {
       ).rejects.toThrow(ValidationError);
       await expect(
         service.updatePostById(userId, postId, request.post)
-      ).rejects.toBe('"postId" must be a valid GUID');
+      ).rejects.toThrow(new ValidationError('"postId" must be a valid GUID'));
     });
 
     it('should throw a ValidationError when user not has permission', async () => {
@@ -377,7 +381,7 @@ describe('PostService', () => {
       ).rejects.toThrow(PermissionError);
       await expect(
         service.updatePostById(userId, postId, request.post)
-      ).rejects.toBe('Unauthorized to update post');
+      ).rejects.toThrow(new ValidationError('Unauthorized to update post'));
     });
 
     it('should throw a ValidationError when post not found', async () => {
@@ -393,7 +397,7 @@ describe('PostService', () => {
       ).rejects.toThrow(ValidationError);
       await expect(
         service.updatePostById(userId, postId, request.post)
-      ).rejects.toBe('Post not found');
+      ).rejects.toThrow(new ValidationError('Post not found'));
     });
 
     it('should throw a ValidationError when status is not valid', async () => {
@@ -411,8 +415,10 @@ describe('PostService', () => {
       ).rejects.toThrow(ValidationError);
       await expect(
         service.updatePostById(userId, postId, request.post)
-      ).rejects.toBe(
-        '"post.status" must be one of [DRAFT, PUBLISHED, ARCHIVED]'
+      ).rejects.toThrow(
+        new ValidationError(
+          '"post.status" must be one of [DRAFT, PUBLISHED, ARCHIVED]'
+        )
       );
     });
 
@@ -431,7 +437,9 @@ describe('PostService', () => {
       ).rejects.toThrow(ValidationError);
       await expect(
         service.updatePostById(userId, postId, request.post)
-      ).rejects.toBe('"post.title" is not allowed to be empty');
+      ).rejects.toThrow(
+        new ValidationError('"post.title" is not allowed to be empty')
+      );
     });
 
     it('should throw a ValidationError when content is empty', async () => {
@@ -449,7 +457,9 @@ describe('PostService', () => {
       ).rejects.toThrow(ValidationError);
       await expect(
         service.updatePostById(userId, postId, request.post)
-      ).rejects.toBe('"post.content" is not allowed to be empty');
+      ).rejects.toThrow(
+        new ValidationError('"post.content" is not allowed to be empty')
+      );
     });
 
     it('should throw a ValidationError when tags is not an array', async () => {
@@ -467,7 +477,7 @@ describe('PostService', () => {
       ).rejects.toThrow(ValidationError);
       await expect(
         service.updatePostById(userId, postId, request.post)
-      ).rejects.toBe('"post.tags" must be an array');
+      ).rejects.toThrow(new ValidationError('"post.tags" must be an array'));
     });
   });
 });
